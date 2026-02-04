@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Croppie Test State</title>
+    <title>Croppie</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1035,7 +1035,7 @@
 
         // Theme Toggle
         function loadTheme() {
-            const savedTheme = localStorage.getItem('cropmaster-theme');
+            const savedTheme = localStorage.getItem('croppie-theme');
             if (savedTheme === 'light') {
                 isDarkTheme = false;
                 document.documentElement.setAttribute('data-theme', 'light');
@@ -1049,11 +1049,11 @@
             if (isDarkTheme) {
                 document.documentElement.removeAttribute('data-theme');
                 themeIcon.textContent = '☀️';
-                localStorage.setItem('cropmaster-theme', 'dark');
+                localStorage.setItem('croppie-theme', 'dark');
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
                 themeIcon.textContent = '🌙';
-                localStorage.setItem('cropmaster-theme', 'light');
+                localStorage.setItem('croppie-theme', 'light');
             }
         });
 
@@ -1164,9 +1164,6 @@
 
         // Mouse events for drawing crop area
         imageCanvas.addEventListener('mousedown', startDraw);
-        imageCanvas.addEventListener('mousemove', draw);
-        imageCanvas.addEventListener('mouseup', endDraw);
-        imageCanvas.addEventListener('mouseleave', endDraw);
 
         // Touch events for mobile
         imageCanvas.addEventListener('touchstart', (e) => {
@@ -1182,7 +1179,7 @@
         imageCanvas.addEventListener('touchend', endDraw);
 
         function startDraw(e) {
-            if (cropOverlay.classList.contains('active')) return;
+            if (cropOverlay.classList.contains('active') && !cropOverlay.classList.contains('drawing')) return;
             
             canvasRect = imageCanvas.getBoundingClientRect();
             isDrawing = true;
@@ -1201,6 +1198,10 @@
             
             // Show overlay immediately while drawing
             cropOverlay.classList.add('active', 'drawing');
+            
+            // Use document-level events so drawing continues even outside canvas
+            document.addEventListener('mousemove', draw);
+            document.addEventListener('mouseup', endDraw);
         }
 
         function draw(e) {
@@ -1246,6 +1247,8 @@
                 }
             }
             isDrawing = false;
+            document.removeEventListener('mousemove', draw);
+            document.removeEventListener('mouseup', endDraw);
         }
 
         function updateCropOverlay() {
