@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Croppie</title>
+    <title>CropMaster Test State</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -543,6 +543,13 @@
         }
 
         .crop-overlay.hide-handles .handle {
+            display: none;
+        }
+
+        /* Hide handles and info while drawing */
+        .crop-overlay.drawing .handle,
+        .crop-overlay.drawing .crop-info,
+        .crop-overlay.drawing .live-preview-bubble {
             display: none;
         }
 
@@ -1187,6 +1194,9 @@
             cropRect.y = startY;
             cropRect.width = 0;
             cropRect.height = 0;
+            
+            // Show overlay immediately while drawing
+            cropOverlay.classList.add('active', 'drawing');
         }
 
         function draw(e) {
@@ -1222,9 +1232,14 @@
         }
 
         function endDraw() {
-            if (isDrawing && cropRect.width > 10 && cropRect.height > 10) {
-                cropOverlay.classList.add('active');
-                positionController.classList.add('active');
+            if (isDrawing) {
+                cropOverlay.classList.remove('drawing');
+                if (cropRect.width > 10 && cropRect.height > 10) {
+                    positionController.classList.add('active');
+                } else {
+                    // Crop too small, hide overlay
+                    cropOverlay.classList.remove('active');
+                }
             }
             isDrawing = false;
         }
