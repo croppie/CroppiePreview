@@ -546,7 +546,11 @@
             display: none;
         }
 
-        /* Hide handles and info while drawing */
+        /* Hide handles and info while drawing, and disable pointer events */
+        .crop-overlay.drawing {
+            pointer-events: none !important;
+        }
+
         .crop-overlay.drawing .handle,
         .crop-overlay.drawing .crop-info,
         .crop-overlay.drawing .live-preview-bubble {
